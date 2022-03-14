@@ -14,10 +14,10 @@ namespace fakeLook_starter.Interfaces
         public T GetById(int id);
         public ICollection<T> GetByPredicate(Func<T, bool> predicate);
     }
-    public interface IUserRepository : IRepository<User>
-    {
+    //public interface IUser : IRepository<User>
+    //{
 
-    }
+    //}
     public interface IPostRepository : IRepository<Post>
     {
 

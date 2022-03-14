@@ -1,5 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using fakeLook_models.Models;
+using fakeLook_starter.Interfaces;
+using fakeLook_starter.Repositories;
+using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -9,11 +13,24 @@ namespace fakeLook_starter.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        // GET: api/<UserController>
-        [HttpGet]
-        public IEnumerable<string> Get()
+        private IUserRepository _userRepository;
+        public UserController(IUserRepository userRepository)
         {
-            return new string[] { "value1", "value2" };
+            _userRepository = userRepository;
+        }
+
+        // GET: api/<UserController>
+        //[HttpGet]
+        //public IEnumerable<string> Get()
+        //{
+        //    return new string[] { "value1", "value2" };
+        //}
+
+        // GET: api/<UserController>
+        [HttpGet("GetAllUsers")]
+        public IEnumerable<User> GetAll()
+        {
+            return _userRepository.GetAll();
         }
 
         // GET api/<UserController>/5
@@ -25,14 +42,16 @@ namespace fakeLook_starter.Controllers
 
         // POST api/<UserController>
         [HttpPost]
-        public void Post([FromBody] string value)
-        {
+        public async Task Post([FromBody] User value)
+        { 
+            await _userRepository.Add(value);
         }
 
         // PUT api/<UserController>/5
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] string value)
         {
+
         }
 
         // DELETE api/<UserController>/5

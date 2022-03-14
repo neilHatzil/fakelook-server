@@ -4,6 +4,7 @@ using fakeLook_starter.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace fakeLook_starter.Repositories
 {
@@ -14,36 +15,49 @@ namespace fakeLook_starter.Repositories
         {
             _context = context;
         }
-        //public async Task<Post> Add(Post item)
-        //{
-        //    var res = _context.Posts.Add(item);
-        //    await _context.SaveChangesAsync();
-        //    return res.Entity;
-        //}
 
-        public Task<User> Add(User item)
+        // Add new User
+        public async Task<User> Add(User item)
+        {
+            var res = _context.Users.Add(item);
+            await _context.SaveChangesAsync();
+            return res.Entity;
+        }
+
+        // Delete User
+        public Task Delete(int id)
         {
             throw new NotImplementedException();
         }
 
+        // Edit User
         public Task<User> Edit(User item)
         {
             throw new NotImplementedException();
         }
 
+        // Get User data by id
+        public Task<User> Get(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        // Get All Users
         public ICollection<User> GetAll()
         {
-            throw new NotImplementedException();
+            var users = _context.Users.ToList();
+            return users;
         }
 
-        public User GetById(int id)
+        // Update User
+        public Task<User> Update(User item)
         {
             throw new NotImplementedException();
         }
 
-        public ICollection<User> GetByPredicate(Func<User, bool> predicate)
-        {
-            throw new NotImplementedException();
-        }
+        //public ICollection<User> GetByPredicate(Func<User, bool> predicate)
+        //{
+        //    throw new NotImplementedException();
+        //}
     }
 }
