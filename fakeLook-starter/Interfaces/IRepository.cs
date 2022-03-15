@@ -8,11 +8,10 @@ namespace fakeLook_starter.Interfaces
 {
     public interface IRepository<T>
     {
-        public Task<T> Add(T item);
-        public ICollection<T> GetAll();
-        public Task<T> Edit(T item);
-        public T GetById(int id);
-        public ICollection<T> GetByPredicate(Func<T, bool> predicate);
+        public T Post(T item);
+        public T GetById(string id);
+        public T FindItem(T item);
+        //public ICollection<T> GetByPredicate(Func<T, bool> predicate);
     }
     //public interface IUser : IRepository<User>
     //{

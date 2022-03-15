@@ -14,6 +14,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using fakeLook_starter.Interfaces;
 using fakeLook_starter.Repositories;
+using auth_example.Services;
+using fakeLook_models.Models;
 
 namespace fakeLook_starter
 {
@@ -35,6 +37,7 @@ namespace fakeLook_starter
             #region Setting repository and services interfaces
             services.AddTransient<IPostRepository, PostRepository>();
             services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<ITokenService, TokenService>();
 
             #endregion
             #region Setting DB configuration

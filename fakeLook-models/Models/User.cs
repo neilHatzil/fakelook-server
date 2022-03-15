@@ -9,13 +9,14 @@ namespace fakeLook_models.Models
     public class User
     {
         public int Id { get; set; }
-        public string Name { get; set; }
+        public string UserName { get; set; }
         public string Password { get; set; }
+        public string Name { get; set; }
         public string Address { get; set; }
-
         public string Age { get; set; }
-
         public string WorkPlace { get; set; }
+
+        //public string Role { get; set; }
 
         /* EF Relations */
         public virtual ICollection<Comment> Comments { get; set; }

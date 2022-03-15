@@ -6,12 +6,17 @@ namespace fakeLook_starter.Interfaces
 {
     public interface IUserRepository
     {
-        public Task<User> Add(User item);
+        public Task<User> Get(string userName);
 
+        // For Authentication
+        public User FindItem(User item);
         public ICollection<User> GetAll();
-
-        public Task<User> Get(int id);
+        public Task<User> Add(User item);
+        
+        // For Authentication
+        public User Post(User item);
         public Task<User> Update(User item);
         public Task Delete(int id);
+
     }
 }

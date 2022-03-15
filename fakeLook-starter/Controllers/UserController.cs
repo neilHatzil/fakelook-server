@@ -20,28 +20,21 @@ namespace fakeLook_starter.Controllers
         }
 
         // GET: api/<UserController>
-        //[HttpGet]
-        //public IEnumerable<string> Get()
-        //{
-        //    return new string[] { "value1", "value2" };
-        //}
-
-        // GET: api/<UserController>
         [HttpGet("GetAllUsers")]
         public IEnumerable<User> GetAll()
         {
             return _userRepository.GetAll();
         }
 
-        // GET api/<UserController>/5
+        // GET api/<UserController>/id
         [HttpGet("{id}")]
         public string Get(int id)
         {
-            return "value";
+            return "";
         }
 
         // POST api/<UserController>
-        [HttpPost]
+        [HttpPost("SignUp")]
         public async Task Post([FromBody] User value)
         { 
             await _userRepository.Add(value);

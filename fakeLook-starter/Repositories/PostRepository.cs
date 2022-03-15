@@ -30,6 +30,11 @@ namespace fakeLook_starter.Repositories
             return res.Entity;
         }
 
+        public Post FindItem(Post item)
+        {
+            throw new NotImplementedException();
+        }
+
         public ICollection<Post> GetAll()
         {
             return _context.Posts.ToList();
@@ -40,9 +45,24 @@ namespace fakeLook_starter.Repositories
             return _context.Posts.SingleOrDefault(p => p.Id == id);
         }
 
+        public Post GetById(string id)
+        {
+            throw new NotImplementedException();
+        }
+
         public ICollection<Post> GetByPredicate(Func<Post,bool> predicate)
         {
             return _context.Posts.Where(predicate).ToList();
+        }
+
+        public Task<Post> Post(Post item)
+        {
+            throw new NotImplementedException();
+        }
+
+        Post IRepository<Post>.Post(Post item)
+        {
+            throw new NotImplementedException();
         }
     }
 }
