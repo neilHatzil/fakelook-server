@@ -35,13 +35,18 @@ namespace auth_example.Controllers
         {
             var dbUser = _repo.FindItem(user);
             if (dbUser == null) return Problem("user not in system");
+
             var token = _tokenService.CreateToken(dbUser);
             return Ok(new { token });
         }
+
         [HttpPost]
         [Route("SignUp")]
         public IActionResult SignUp([FromBody] User user)
         {
+            var checkUser = _repo.FindItem(user);
+            if (checkUser != null) return Problem("userName already in DB");
+
             var dbUser = _repo.Add(user).Result;
             var token = _tokenService.CreateToken(dbUser);
             return Ok(new { token });

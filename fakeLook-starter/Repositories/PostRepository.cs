@@ -16,28 +16,11 @@ namespace fakeLook_starter.Repositories
             _context = context;
         }
 
-        public async Task<Post> Add(Post item)
+        public async Task<Post> AddPost(Post item)
         {
             var res = _context.Posts.Add(item);
             await _context.SaveChangesAsync();
             return res.Entity;
-        }
-
-        public async Task<Post> Edit(Post item)
-        {
-            var res = _context.Posts.Update(item);
-            await _context.SaveChangesAsync();
-            return res.Entity;
-        }
-
-        public Post FindItem(Post item)
-        {
-            throw new NotImplementedException();
-        }
-
-        public ICollection<Post> GetAll()
-        {
-            return _context.Posts.ToList();
         }
 
         public Post GetById(int id)
@@ -45,24 +28,36 @@ namespace fakeLook_starter.Repositories
             return _context.Posts.SingleOrDefault(p => p.Id == id);
         }
 
-        public Post GetById(string id)
+        public async Task<Post> EditPost(Post item)
         {
-            throw new NotImplementedException();
+            var res = _context.Posts.Update(item);
+            await _context.SaveChangesAsync();
+            return res.Entity;
         }
 
-        public ICollection<Post> GetByPredicate(Func<Post,bool> predicate)
+        public async Task<Post> DeletePost(Post item)
         {
-            return _context.Posts.Where(predicate).ToList();
+            var res = _context.Posts.Remove(item);
+            await _context.SaveChangesAsync();
+            return res.Entity;
         }
 
-        public Task<Post> Post(Post item)
-        {
-            throw new NotImplementedException();
-        }
+        //public Post FindItem(Post item)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
-        Post IRepository<Post>.Post(Post item)
-        {
-            throw new NotImplementedException();
-        }
+        //public ICollection<Post> GetAll()
+        //{
+        //    return _context.Posts.ToList();
+        //}
+
+
+        //public ICollection<Post> GetByPredicate(Func<Post,bool> predicate)
+        //{
+        //    return _context.Posts.Where(predicate).ToList();
+        //}
+
+
     }
 }

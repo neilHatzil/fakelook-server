@@ -26,11 +26,11 @@ namespace fakeLook_starter.Controllers
             return _userRepository.GetAll();
         }
 
-        // GET api/<UserController>/id
-        [HttpGet("{id}")]
-        public string Get(int id)
+        // GET api/<UserController>/userName
+        [HttpGet("{userName}")]
+        public User Get(string userName)
         {
-            return "";
+            return _userRepository.GetById(userName);
         }
 
         // POST api/<UserController>
@@ -42,9 +42,11 @@ namespace fakeLook_starter.Controllers
 
         // PUT api/<UserController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public async Task Put([FromBody] User value)
         {
-
+            //var checkUser = _userRepository.FindItem(value);
+            //if (checkUser == null) return Problem("userName already in DB");
+            await _userRepository.Update(value);
         }
 
         // DELETE api/<UserController>/5

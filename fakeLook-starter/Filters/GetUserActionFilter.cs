@@ -11,9 +11,9 @@ namespace auth_example.Filters
     public class GetUserActionFilter : ActionFilterAttribute
     {
         private readonly ITokenService _tokenService;
-        private readonly IRepository<User> _userRepository;
+        private readonly IUserRepository _userRepository;
 
-        public GetUserActionFilter(ITokenService tokenService, IRepository<User> userRepository)
+        public GetUserActionFilter(ITokenService tokenService, IUserRepository userRepository)
         {
             _tokenService = tokenService;
             _userRepository = userRepository;

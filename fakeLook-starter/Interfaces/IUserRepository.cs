@@ -10,6 +10,7 @@ namespace fakeLook_starter.Interfaces
 
         // For Authentication
         public User FindItem(User item);
+        public User GetById(string id);
         public ICollection<User> GetAll();
         public Task<User> Add(User item);
         

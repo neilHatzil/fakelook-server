@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Security.Cryptography;
 using fakeLook_starter.Utilities;
+using Microsoft.AspNetCore.Mvc;
 
 namespace fakeLook_starter.Repositories
 {
@@ -37,6 +38,12 @@ namespace fakeLook_starter.Repositories
             return _context.Users.SingleOrDefault(p => p.UserName == item.UserName && p.Password == item.Password);
         }
 
+        public User GetById(string userName)
+        {
+            return _context.Users.SingleOrDefault(p => p.UserName == userName);
+
+        }
+
         // Get All Users
         public ICollection<User> GetAll()
         {
@@ -62,9 +69,13 @@ namespace fakeLook_starter.Repositories
         }
 
         // Update User
-        public Task<User> Update(User item)
+        public async Task<User> Update(User item)
         {
-            throw new NotImplementedException();
+            item.Password = Utilities.Utilities.CreateHashCode(item.Password);
+            var user = _context.Users.SingleOrDefault(p => p.UserName == item.UserName && p.Password == item.Password);
+            var res = _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+            return res.Entity;
         }
 
         // Delete User
