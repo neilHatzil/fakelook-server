@@ -27,7 +27,7 @@ namespace auth_example.Services
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
             var claims = new[] {
-            new Claim(ClaimTypes.Name, user.Id.ToString())//,
+            new Claim(ClaimTypes.Name, user.UserName.ToString())//,
             //new Claim(ClaimTypes.Name, user.Id.ToString()),
             //new Claim(ClaimTypes.Role, user.Role),
             //new Claim(ClaimTypes.NameIdentifier,
@@ -42,6 +42,7 @@ namespace auth_example.Services
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
+        // Decrypt the token
         public string GetPayload(string token)
         {
             var tokenHandler = new JwtSecurityTokenHandler();

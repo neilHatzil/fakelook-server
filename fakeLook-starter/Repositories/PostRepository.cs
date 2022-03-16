@@ -42,6 +42,12 @@ namespace fakeLook_starter.Repositories
             return res.Entity;
         }
 
+        public IEnumerable<Post> GetAllPosts()
+        {
+            var posts = _context.Posts.OrderByDescending(d => d.Date).ToList();
+            return posts;
+        }
+
         //public Post FindItem(Post item)
         //{
         //    throw new NotImplementedException();

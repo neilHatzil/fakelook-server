@@ -33,9 +33,9 @@ namespace fakeLook_starter.Repositories
 
         public User FindItem(User item)
         {
-            // find by userName and hashed password
-            item.Password = Utilities.Utilities.CreateHashCode(item.Password);
-            return _context.Users.SingleOrDefault(p => p.UserName == item.UserName && p.Password == item.Password);
+            // find by userName
+            var res = _context.Users.SingleOrDefault(p => p.UserName == item.UserName);
+            return res;
         }
 
         public User GetById(string userName)

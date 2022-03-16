@@ -12,6 +12,8 @@ namespace fakeLook_starter.Interfaces
         public Post GetById(int id);
         public Task<Post> EditPost(Post item);
         public Task<Post> DeletePost(Post item);
+        public IEnumerable<Post> GetAllPosts();
+
         //public ICollection<T> GetByPredicate(Func<T, bool> predicate);
     }
 

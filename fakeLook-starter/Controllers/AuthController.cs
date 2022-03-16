@@ -1,6 +1,7 @@
 ﻿using auth_example.Filters;
 using fakeLook_models.Models;
 using fakeLook_starter.Interfaces;
+using fakeLook_starter.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -45,7 +46,10 @@ namespace auth_example.Controllers
         public IActionResult SignUp([FromBody] User user)
         {
             var checkUser = _repo.FindItem(user);
+            // Check if user in Db
             if (checkUser != null) return Problem("userName already in DB");
+            // Check if password is correct
+            if(checkUser.Password != Utilities.CreateHashCode(user.Password)) return Problem("the password is wrong");
 
             var dbUser = _repo.Add(user).Result;
             var token = _tokenService.CreateToken(dbUser);
