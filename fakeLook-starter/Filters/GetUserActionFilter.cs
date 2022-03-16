@@ -23,8 +23,8 @@ namespace auth_example.Filters
         {
             var token = context.HttpContext.Request.Headers.Where(header => header.Key == "Authorization").SingleOrDefault().Value.ToString().Split(" ")[1];
             var user = _userRepository.GetById(_tokenService.GetPayload(token));
-            Console.WriteLine("inside Filter: "+user);
             context.HttpContext.Request.RouteValues.Add("user", user);
+
         }
     }
 }

@@ -37,6 +37,7 @@ namespace fakeLook_starter.Controllers
         //[TypeFilter(typeof(GetUserActionFilter))]
         public Post GetById(int id)
         {
+       
             return _postRepository.GetById(id);
         }
 
