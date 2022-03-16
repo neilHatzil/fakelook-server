@@ -1,4 +1,5 @@
 using fakeLook_dal.Data;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -16,6 +17,9 @@ using fakeLook_starter.Interfaces;
 using fakeLook_starter.Repositories;
 using auth_example.Services;
 using fakeLook_models.Models;
+using fakeLook_starter.Services;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace fakeLook_starter
 {
@@ -32,12 +36,29 @@ namespace fakeLook_starter
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            #region Configure jwt Auth
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+              .AddJwtBearer(options =>
+              {
+                  options.TokenValidationParameters = new TokenValidationParameters
+                  {
+                      ValidateIssuer = true,
+                      ValidateAudience = true,
+                      ValidateLifetime = true,
+                      ValidateIssuerSigningKey = true,
+                      ValidIssuer = Configuration["Jwt:Issuer"],
+                      ValidAudience = Configuration["Jwt:Issuer"],
+                      IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]))
+                  };
+              });
+            #endregion
 
             services.AddControllers();
             #region Setting repository and services interfaces
             services.AddTransient<IPostRepository, PostRepository>();
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<ITokenService, TokenService>();
+            services.AddTransient<IDtoConverter, DtoConverter>();
 
             #endregion
             #region Setting DB configuration
