@@ -35,7 +35,10 @@ namespace auth_example.Controllers
         public IActionResult Login([FromBody] User user)
         {
             var dbUser = _repo.FindItem(user);
-            if (dbUser == null) return Problem("user not in system");
+            // Check if user in Db
+            if (dbUser != null) return Problem("userName already in DB");
+            // Check if password is correct
+            if (dbUser.Password != Utilities.CreateHashCode(user.Password)) return Problem("the password is wrong");
 
             var token = _tokenService.CreateToken(dbUser);
             return Ok(new { token });
@@ -48,8 +51,6 @@ namespace auth_example.Controllers
             var checkUser = _repo.FindItem(user);
             // Check if user in Db
             if (checkUser != null) return Problem("userName already in DB");
-            // Check if password is correct
-            if(checkUser.Password != Utilities.CreateHashCode(user.Password)) return Problem("the password is wrong");
 
             var dbUser = _repo.Add(user).Result;
             var token = _tokenService.CreateToken(dbUser);

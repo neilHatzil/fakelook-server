@@ -12,7 +12,7 @@ namespace fakeLook_starter.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [TypeFilter(typeof(GetUserActionFilter))]
     public class PostController : ControllerBase
     {
         private IPostRepository _postRepository;
