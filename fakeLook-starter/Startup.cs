@@ -93,6 +93,8 @@ namespace fakeLook_starter
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
+
             app.UseRouting();
 
             app.UseCors(_MyAllowSpecificOrigin);

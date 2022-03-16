@@ -64,7 +64,7 @@ namespace auth_example.Controllers
         [Authorize]
         [HttpGet]
         [Route("TestAll")]
-
+        [TypeFilter(typeof(GetUserActionFilter))]
         public IActionResult TestAll()
         {
             return Ok();

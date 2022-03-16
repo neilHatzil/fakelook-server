@@ -64,5 +64,11 @@ namespace fakeLook_starter.Controllers
         {
             return _postRepository.GetAllPosts();
         }
+
+        [HttpPost("TagPost")]
+        public IEnumerable<Post> TagPost()
+        {
+            return _postRepository.GetAllPosts();
+        }
     }
 }
