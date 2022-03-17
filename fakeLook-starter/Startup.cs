@@ -59,6 +59,7 @@ namespace fakeLook_starter
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<ITokenService, TokenService>();
             services.AddTransient<IDtoConverter, DtoConverter>();
+            services.AddTransient<ITagRepository, TagRepository>();
 
             #endregion
             #region Setting DB configuration
@@ -83,6 +84,7 @@ namespace fakeLook_starter
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, DataContext data)
         {
+            //data.Database.EnsureDeleted();
             data.Database.EnsureCreated();
             if (env.IsDevelopment())
             {

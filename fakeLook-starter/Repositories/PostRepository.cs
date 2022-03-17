@@ -14,16 +14,23 @@ namespace fakeLook_starter.Repositories
     {
         readonly private DataContext _context;
         private readonly IDtoConverter _dtoConverter;
+        readonly private ITagRepository _tagRepository;
 
-        public PostRepository(DataContext context, IDtoConverter dtoConverter)
+        public PostRepository(DataContext context, IDtoConverter dtoConverter, ITagRepository tagRepository)
         {
             _context = context;
             _dtoConverter = dtoConverter;
+            _tagRepository = tagRepository;
         }
 
         public async Task<Post> AddPost(Post item)
         {
+            // Add tags to post
+            AddTagsOnPost(item.Tags);
+            // Add tag to context
             var res = _context.Posts.Add(item);
+            // Add userTagged to post to post
+            res.Entity.UserTaggedPost.Union(item.UserTaggedPost);
             await _context.SaveChangesAsync();
             return res.Entity;
         }
@@ -40,31 +47,43 @@ namespace fakeLook_starter.Repositories
             return res.Entity;
         }
 
-        public async Task<Post> DeletePost(Post item)
+        // send only id and call inside function get by id
+        public async Task<Post> DeletePost(int id)
         {
-            var res = _context.Posts.Remove(item);
+            var post = GetById(id);
+            var res = _context.Posts.Remove(post);
             await _context.SaveChangesAsync();
             return res.Entity;
         }
 
         public IEnumerable<Post> GetAllPosts()
         {
-            var posts = _context.Posts.OrderByDescending(d => d.Date)
+            var posts = _context.Posts
+                .OrderByDescending(d => d.Date)
                 .Include(p => p.Likes)
                 .Include(p => p.Tags)
+                .Include(p => p.UserTaggedPost)
                 .Include(p => p.User)
                 .Include(p => p.Comments)
                 .ThenInclude(c => c.User)
                 .Include(p => p.Comments)
                 .ThenInclude(c => c.Tags)
+                .Include(p => p.Comments)
+                .ThenInclude(c => c.UserTaggedComment)
                 .Select(DtoLogic).ToList();
             return posts;
         }
 
-        public Task<Post> TagPost(Post item, Tag tag)
+        private List<Tag> AddTagsOnPost(ICollection<Tag> tags)
         {
-            throw new NotImplementedException();
+            // Add Tags to context and receive a list of tags
+            return _tagRepository.AddTags(tags).Result;
         }
+
+        //private void AddTaggedUsersOnPost(ICollection<UserTaggedPost> userTaggedPost, Post post )
+        //{
+        //    post.UserTaggedPost.Union(userTaggedPost);
+        //}
 
         //public Post FindItem(Post item)
         //{
@@ -87,6 +106,8 @@ namespace fakeLook_starter.Repositories
             var dtoPost = _dtoConverter.DtoPost(post);
             // User
             dtoPost.User = _dtoConverter.DtoUser(post.User);
+            // User ID
+            dtoPost.UserId = post.UserId;
             // Comments
             dtoPost.Comments = post.Comments?.Select(c =>
             {
@@ -132,6 +153,5 @@ namespace fakeLook_starter.Repositories
 
             return dtoPost;
         }
-
     }
 }

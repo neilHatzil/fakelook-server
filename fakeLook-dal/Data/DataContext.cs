@@ -23,19 +23,23 @@ namespace fakeLook_dal.Data
         {
             #region Model Mapping
             //users
-            modelBuilder.Entity<User>().HasMany(u => u.Comments).WithOne(c => c.User).OnDelete(DeleteBehavior.NoAction);
-            modelBuilder.Entity<User>().HasMany(u => u.Posts).WithOne(p => p.User).OnDelete(DeleteBehavior.NoAction);
-            modelBuilder.Entity<User>().HasMany(u => u.Likes).WithOne(l => l.User).OnDelete(DeleteBehavior.NoAction);
-            modelBuilder.Entity<User>().HasMany(u => u.UserTaggedComment).WithOne(utc => utc.User).OnDelete(DeleteBehavior.NoAction);
-            modelBuilder.Entity<User>().HasMany(u => u.UserTaggedPost).WithOne(utp => utp.User).OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<User>().HasMany(u => u.Comments).WithOne(c => c.User).OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<User>().HasMany(u => u.Posts).WithOne(p => p.User).OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<User>().HasMany(u => u.Likes).WithOne(l => l.User).OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<User>().HasMany(u => u.UserTaggedComment).WithOne(utc => utc.User).OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<User>().HasMany(u => u.UserTaggedPost).WithOne(utp => utp.User).OnDelete(DeleteBehavior.Cascade);
             ;
             //posts
-            modelBuilder.Entity<Post>().HasMany(p => p.Likes).WithOne(l => l.Post).OnDelete(DeleteBehavior.NoAction);
-            modelBuilder.Entity<Post>().HasMany(p => p.Comments).WithOne(c => c.Post).OnDelete(DeleteBehavior.NoAction);
-            modelBuilder.Entity<Post>().HasMany(p => p.UserTaggedPost).WithOne(utp => utp.Post).OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<Post>()
+                .HasMany(p => p.Likes)
+                .WithOne(l => l.Post)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Post>().HasMany(p => p.Comments).WithOne(c => c.Post).OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<Post>().HasMany(p => p.UserTaggedPost).WithOne(utp => utp.Post).OnDelete(DeleteBehavior.Cascade);
             ;
             //comment
-            modelBuilder.Entity<Comment>().HasMany(c => c.UserTaggedComment).WithOne(utc => utc.Comment).OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<Comment>().HasMany(c => c.UserTaggedComment).WithOne(utc => utc.Comment).OnDelete(DeleteBehavior.Cascade);
             #endregion
             //simple seed
             SeedDb(modelBuilder);

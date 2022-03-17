@@ -54,19 +54,13 @@ namespace fakeLook_starter.Controllers
         [HttpDelete("{id}")]
         //[Route("Authenticated")]
         //[TypeFilter(typeof(GetUserActionFilter))]
-        public async Task DeletePost(Post item)
+        public async Task DeletePost(int id)
         {
-            await _postRepository.DeletePost(item);
+            await _postRepository.DeletePost(id);
         }
 
         [HttpGet("GetAllPosts")]
         public IEnumerable<Post> GetAllPosts()
-        {
-            return _postRepository.GetAllPosts();
-        }
-
-        [HttpPost("TagPost")]
-        public IEnumerable<Post> TagPost()
         {
             return _postRepository.GetAllPosts();
         }
