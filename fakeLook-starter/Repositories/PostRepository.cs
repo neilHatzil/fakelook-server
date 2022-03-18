@@ -37,7 +37,17 @@ namespace fakeLook_starter.Repositories
 
         public Post GetById(int id)
         {
-            return _context.Posts.SingleOrDefault(p => p.Id == id);
+            var posts = _context.Posts
+                .Include(p => p.Likes)
+                .Include(p => p.Tags)
+                .Include(p => p.UserTaggedPost)
+                .Include(p => p.Comments)
+                .ThenInclude(c => c.Tags)
+                .Include(p => p.Comments)
+                .ThenInclude(c => c.UserTaggedComment)
+                .Select(DtoLogic)
+                .SingleOrDefault(p => p.Id == id);
+            return posts; 
         }
 
         public async Task<Post> EditPost(Post item)
@@ -63,9 +73,6 @@ namespace fakeLook_starter.Repositories
                 .Include(p => p.Likes)
                 .Include(p => p.Tags)
                 .Include(p => p.UserTaggedPost)
-                .Include(p => p.User)
-                .Include(p => p.Comments)
-                .ThenInclude(c => c.User)
                 .Include(p => p.Comments)
                 .ThenInclude(c => c.Tags)
                 .Include(p => p.Comments)
@@ -74,10 +81,57 @@ namespace fakeLook_starter.Repositories
             return posts;
         }
 
-        private List<Tag> AddTagsOnPost(ICollection<Tag> tags)
+        // Add Like to post if not exist or change IsActive if exists
+        public async Task<Post> LikeUnlike(int postId, int userId)
+        {
+            //Post post = GetById(postId);
+            ////_context.Posts.SingleOrDefault(p => p.id == postId);
+            //Like like = post.Likes
+            //    .Where(l => l.PostId == postId && l.UserId == userId)
+            //    .SingleOrDefault();
+
+            //if(like == null)
+            //{
+            //    // Like doesn't exists - add a new one
+            //   _context.Posts.Where(p => p.Id == postId).SingleOrDefault().Likes
+            //        .Append(new Like { IsActive = true ,UserId = userId, PostId = postId});
+            //}
+            //else
+            //{
+            //    // boolean XOR on IsActive
+            //    bool l = like.IsActive^true;
+            //    // Like exists - change IsActive of the like
+            //   _context.Posts.Where(p => p.Id == postId).SingleOrDefault()
+            //            .Likes.Where(l => l.UserId == userId).SingleOrDefault().IsActive = l;
+            //}
+
+            //post = GetById(postId);
+            //var res;
+            var like = _context.Likes.Where(l => l.PostId == postId && l.UserId == userId).SingleOrDefault();
+            if (like == null)
+            {
+                // Like doesn't exists - add a new one
+                var res = _context.Likes
+                     .Add(new Like { IsActive = true, UserId = userId, PostId = postId });
+            }
+            else
+            {
+                // boolean XOR on IsActive
+                bool l = like.IsActive ^ true;
+                like.IsActive = l;
+                // Like exists - change IsActive of the like
+               var res = _context.Likes.Update(like);
+            }
+
+            Post post = GetById(postId);
+            await _context.SaveChangesAsync();
+            return post;
+        }
+
+        private void AddTagsOnPost(ICollection<Tag> tags)
         {
             // Add Tags to context and receive a list of tags
-            return _tagRepository.AddTags(tags).Result;
+            _tagRepository.AddTags(tags);
         }
 
         //private void AddTaggedUsersOnPost(ICollection<UserTaggedPost> userTaggedPost, Post post )
@@ -105,7 +159,7 @@ namespace fakeLook_starter.Repositories
         {
             var dtoPost = _dtoConverter.DtoPost(post);
             // User
-            dtoPost.User = _dtoConverter.DtoUser(post.User);
+            //dtoPost.User = _dtoConverter.DtoUser(post.User);
             // User ID
             dtoPost.UserId = post.UserId;
             // Comments
@@ -113,7 +167,9 @@ namespace fakeLook_starter.Repositories
             {
                 var dtoComment = _dtoConverter.DtoComment(c);
                 // User of the comment
-                dtoComment.User = _dtoConverter.DtoUser(c.User);
+                //dtoComment.User = _dtoConverter.DtoUser(c.User);
+                // User ID of the comment
+                dtoComment.UserId = c.UserId;
                 // Tags of the comment
                 dtoComment.Tags = c.Tags?.Select(t =>
                 {
@@ -132,10 +188,16 @@ namespace fakeLook_starter.Repositories
             dtoPost.Likes = post.Likes?.Select(c =>
             {
                 var dtoLike = _dtoConverter.DtoLike(c);
+                // Like Id of like
+                dtoLike.Id = c.Id;
                 // User of the like
-                dtoLike.User = _dtoConverter.DtoUser(c.User);
+                //dtoLike.User = _dtoConverter.DtoUser(c.User);
                 // IsActive of the like
                 dtoLike.IsActive = c.IsActive;
+                // UserId of like
+                dtoLike.UserId = c.UserId;
+                // PostId of like
+                dtoLike.PostId = c.PostId;
                 return dtoLike;
             }).ToArray();
             // Tags

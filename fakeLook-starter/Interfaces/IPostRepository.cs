@@ -13,6 +13,7 @@ namespace fakeLook_starter.Interfaces
         public Task<Post> EditPost(Post item);
         public Task<Post> DeletePost(int itemId);
         public IEnumerable<Post> GetAllPosts();
+        public Task<Post> LikeUnlike(int postId, int userId);
 
         //public ICollection<T> GetByPredicate(Func<T, bool> predicate);
     }

@@ -30,7 +30,7 @@ namespace fakeLook_starter.Controllers
         [HttpGet("{userName}")]
         public User Get(string userName)
         {
-            return _userRepository.GetById(userName);
+            return _userRepository.GetByUserName(userName);
         }
 
         // POST api/<UserController>

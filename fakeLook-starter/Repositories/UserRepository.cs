@@ -38,7 +38,7 @@ namespace fakeLook_starter.Repositories
             return res;
         }
 
-        public User GetById(string userName)
+        public User GetByUserName(string userName)
         {
             return _context.Users.SingleOrDefault(p => p.UserName == userName);
 
@@ -84,5 +84,9 @@ namespace fakeLook_starter.Repositories
             throw new NotImplementedException();
         }
 
+        public User GetById(int id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

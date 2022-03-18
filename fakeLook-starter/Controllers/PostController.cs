@@ -12,7 +12,7 @@ namespace fakeLook_starter.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [TypeFilter(typeof(GetUserActionFilter))]
+    //[TypeFilter(typeof(GetUserActionFilter))]
     public class PostController : ControllerBase
     {
         private IPostRepository _postRepository;
@@ -63,6 +63,13 @@ namespace fakeLook_starter.Controllers
         public IEnumerable<Post> GetAllPosts()
         {
             return _postRepository.GetAllPosts();
+        }
+
+        // POST api/<PostController>/LikeUnlike
+        [HttpPost("LikeUnlike")]
+        public async Task<Post> LikeUnlike(int postId, int userId)
+        {
+            return await _postRepository.LikeUnlike(postId,userId);
         }
     }
 }

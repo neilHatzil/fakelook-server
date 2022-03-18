@@ -36,12 +36,12 @@ namespace fakeLook_starter.Services
 
         public UserTaggedComment DtoUserTaggedComment(UserTaggedComment userTaggedComment)
         {
-            return new UserTaggedComment() { User = DtoUser(userTaggedComment.User) };
+            return new UserTaggedComment() { UserId = userTaggedComment.UserId };
         }
 
         public UserTaggedPost DtoUserTaggedPost(UserTaggedPost userTaggedPost)
         {
-            return new UserTaggedPost() { User = DtoUser(userTaggedPost.User) };
+            return new UserTaggedPost() { UserId = userTaggedPost.UserId };
         }
     }
 }

@@ -22,7 +22,7 @@ namespace auth_example.Filters
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             var token = context.HttpContext.Request.Headers.Where(header => header.Key == "Authorization").SingleOrDefault().Value.ToString().Split(" ")[1];
-            var user = _userRepository.GetById(_tokenService.GetPayload(token));
+            var user = _userRepository.GetByUserName(_tokenService.GetPayload(token));
             context.HttpContext.Request.RouteValues.Add("user", user);
 
         }
