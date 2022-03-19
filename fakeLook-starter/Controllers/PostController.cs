@@ -25,9 +25,9 @@ namespace fakeLook_starter.Controllers
         [HttpPost("AddPost")]
         //[Route("Authenticated")]
         //[TypeFilter(typeof(GetUserActionFilter))]
-        public async Task AddPost([FromBody] Post item)
+        public async Task<Post> AddPost([FromBody] Post item)
         {
-            await _postRepository.AddPost(item);
+           return await _postRepository.AddPost(item);
         }
 
 
@@ -70,6 +70,13 @@ namespace fakeLook_starter.Controllers
         public async Task<Post> LikeUnlike(int postId, int userId)
         {
             return await _postRepository.LikeUnlike(postId,userId);
+        }
+
+        // POST api/<PostController>/AddComment
+        [HttpPost("AddComment")]
+        public async Task<Post> AddComment([FromBody] Comment item)
+        {
+            return await _postRepository.AddComment(item);
         }
     }
 }

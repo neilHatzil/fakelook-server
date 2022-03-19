@@ -14,6 +14,7 @@ namespace fakeLook_starter.Interfaces
         public Task<Post> DeletePost(int itemId);
         public IEnumerable<Post> GetAllPosts();
         public Task<Post> LikeUnlike(int postId, int userId);
+        public Task<Post> AddComment(Comment item);
 
         //public ICollection<T> GetByPredicate(Func<T, bool> predicate);
     }

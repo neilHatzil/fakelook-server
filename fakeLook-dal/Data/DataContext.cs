@@ -23,11 +23,11 @@ namespace fakeLook_dal.Data
         {
             #region Model Mapping
             //users
-            modelBuilder.Entity<User>().HasMany(u => u.Comments).WithOne(c => c.User).OnDelete(DeleteBehavior.Cascade);
-            modelBuilder.Entity<User>().HasMany(u => u.Posts).WithOne(p => p.User).OnDelete(DeleteBehavior.Cascade);
-            modelBuilder.Entity<User>().HasMany(u => u.Likes).WithOne(l => l.User).OnDelete(DeleteBehavior.Cascade);
-            modelBuilder.Entity<User>().HasMany(u => u.UserTaggedComment).WithOne(utc => utc.User).OnDelete(DeleteBehavior.Cascade);
-            modelBuilder.Entity<User>().HasMany(u => u.UserTaggedPost).WithOne(utp => utp.User).OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<User>().HasMany(u => u.Comments).WithOne(c => c.User).OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<User>().HasMany(u => u.Posts).WithOne(p => p.User).OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<User>().HasMany(u => u.Likes).WithOne(l => l.User).OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<User>().HasMany(u => u.UserTaggedComment).WithOne(utc => utc.User).OnDelete(DeleteBehavior.NoAction);
+            modelBuilder.Entity<User>().HasMany(u => u.UserTaggedPost).WithOne(utp => utp.User).OnDelete(DeleteBehavior.NoAction);
             ;
             //posts
             modelBuilder.Entity<Post>()

@@ -15,20 +15,33 @@ namespace fakeLook_starter.Repositories
         readonly private DataContext _context;
         private readonly IDtoConverter _dtoConverter;
         readonly private ITagRepository _tagRepository;
+        readonly private ICommentRepository _commentRepository;
 
-        public PostRepository(DataContext context, IDtoConverter dtoConverter, ITagRepository tagRepository)
+        public PostRepository(DataContext context, IDtoConverter dtoConverter, ITagRepository tagRepository, ICommentRepository commentRepository)
         {
             _context = context;
             _dtoConverter = dtoConverter;
             _tagRepository = tagRepository;
+            _commentRepository = commentRepository;
         }
 
         public async Task<Post> AddPost(Post item)
         {
-            // Add tags to post
-            AddTagsOnPost(item.Tags);
+            List<Tag> tags = new List<Tag>();
+            List<Tag> tagsList = new List<Tag>();
+            tagsList = item.Tags.ToList();
+            // Clear the Taggs of the post
+            item.Tags.Clear();
+            var r = item.Tags.ToList();
+            // Add tags to post - tag table
+            tags = await AddTagsOnPost(tagsList);
             // Add tag to context
             var res = _context.Posts.Add(item);
+            // Add Taggs to post
+            foreach (var tag in tags)
+            {
+                res.Entity.Tags.Add(tag);
+            }
             // Add userTagged to post to post
             res.Entity.UserTaggedPost.Union(item.UserTaggedPost);
             await _context.SaveChangesAsync();
@@ -128,10 +141,23 @@ namespace fakeLook_starter.Repositories
             return post;
         }
 
-        private void AddTagsOnPost(ICollection<Tag> tags)
+        public async Task<Post> AddComment(Comment item)
         {
-            // Add Tags to context and receive a list of tags
-            _tagRepository.AddTags(tags);
+            // Validation on userId
+            // Validation on postId
+
+            // Add Comment through the CommentRepository
+            var comment = _commentRepository.AddComment(item);
+            // Add Comment to post
+            Post post = GetById(item.PostId);
+            //await _context.SaveChangesAsync();
+            return post;
+        }
+
+        private async Task<List<Tag>> AddTagsOnPost(List<Tag> tags)
+        {
+            // Add Tags to context
+            return await _tagRepository.AddTags(tags);
         }
 
         //private void AddTaggedUsersOnPost(ICollection<UserTaggedPost> userTaggedPost, Post post )
@@ -215,5 +241,7 @@ namespace fakeLook_starter.Repositories
 
             return dtoPost;
         }
+
+
     }
 }

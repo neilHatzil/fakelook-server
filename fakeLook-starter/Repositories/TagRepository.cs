@@ -17,12 +17,12 @@ namespace fakeLook_starter.Repositories
             _context = context;
         }
 
-        public async Task<List<Tag>> AddTags(ICollection<Tag> values)
+        public async Task<List<Tag>> AddTags(List<Tag> values)
         {
             List<Tag> tagsList = new List<Tag>();
             foreach (var item in values)
             {
-                var tag = _context.Tags.SingleOrDefault(p => p.Content == item.Content);
+                var tag = _context.Tags.FirstOrDefault(p => p.Content.Equals(item.Content));
                 if (tag != null)
                 {
                     // Get id - add to id's array
@@ -43,5 +43,11 @@ namespace fakeLook_starter.Repositories
         {
             throw new System.NotImplementedException();
         }
+
+        public IEnumerable<Tag> GetAllTags()
+        {
+            return _context.Tags;
+        }
+
     }
 }

@@ -64,6 +64,7 @@ namespace fakeLook_starter
             services.AddTransient<ITokenService, TokenService>();
             services.AddTransient<IDtoConverter, DtoConverter>();
             services.AddTransient<ITagRepository, TagRepository>();
+            services.AddTransient<ICommentRepository, CommentRepository>();
 
             #endregion
             #region Setting DB configuration
