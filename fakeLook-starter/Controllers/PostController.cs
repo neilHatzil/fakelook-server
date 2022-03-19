@@ -74,8 +74,8 @@ namespace fakeLook_starter.Controllers
             return _postRepository.GetAllPosts();
         }
 
-        // POST api/<PostController>/LikeUnlike
-        [HttpPost("LikeUnlike")]
+        // POST api/<PostController>/LikeUnlike/{postId}/{userId}
+        [HttpPost("LikeUnlike/{postId}/{userId}")]
         public async Task<Post> LikeUnlike(int postId, int userId)
         {
             return await _postRepository.LikeUnlike(postId,userId);
