@@ -65,7 +65,32 @@ namespace fakeLook_starter.Repositories
 
         public async Task<Post> EditPost(Post item)
         {
-            var res = _context.Posts.Update(item);
+            List<Tag> tagsList = new List<Tag>();
+            List<UserTaggedPost> userTaggedList = new List<UserTaggedPost>();
+            tagsList = item.Tags.ToList();
+            userTaggedList = item.UserTaggedPost.ToList();
+            // Clear the post's tags and userTagged
+            item.Tags.Clear();
+            item.UserTaggedPost.Clear();
+            // Clear the post's tags and userTagged from context
+            var tagsC = _context.Posts
+                .Include(p => p.Tags)
+                .Include(p => p.UserTaggedPost)
+                .Where(p => p.Id == item.Id).SingleOrDefault();
+            tagsC.Tags.Clear();
+            tagsC.UserTaggedPost.Clear();
+            // Update the post without the tags 
+            var res = _context.Posts.Update(tagsC);
+            // Add new Taggs to post
+            foreach (var tag in tagsList)
+            {
+                res.Entity.Tags.Add(tag);
+            }
+            // Add new userTagged to post
+            foreach (var userTagged in userTaggedList)
+            {
+                res.Entity.UserTaggedPost.Add(userTagged);
+            }
             await _context.SaveChangesAsync();
             return res.Entity;
         }
@@ -241,7 +266,5 @@ namespace fakeLook_starter.Repositories
 
             return dtoPost;
         }
-
-
     }
 }
