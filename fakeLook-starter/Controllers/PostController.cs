@@ -46,9 +46,9 @@ namespace fakeLook_starter.Controllers
         [HttpPut("{id}")]
         //[Route("Authenticated")]
         //[TypeFilter(typeof(GetUserActionFilter))]
-        public async Task EditPost(Post item)
+        public async Task<Post> EditPost(Post item)
         {
-            await _postRepository.EditPost(item);
+            return await _postRepository.EditPost(item);
         }
 
         // EDIT api/<PostController>/EditPostTags

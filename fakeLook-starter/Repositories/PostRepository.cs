@@ -74,6 +74,7 @@ namespace fakeLook_starter.Repositories
 
         public async Task<Post> EditPost(Post item)
         {
+            List<Tag> tags = new List<Tag>();
             List<Tag> tagsList = new List<Tag>();
             List<UserTaggedPost> userTaggedList = new List<UserTaggedPost>();
             tagsList = item.Tags.ToList();
@@ -88,17 +89,21 @@ namespace fakeLook_starter.Repositories
                 .Where(p => p.Id == item.Id).SingleOrDefault();
             tagsC.Tags.Clear();
             tagsC.UserTaggedPost.Clear();
+            // Add tags to post - tag table
+            tags = await AddTagsOnPost(tagsList);
             // Update the post without the tags 
             var res = _context.Posts.Update(tagsC);
             // Add new Taggs to post
-            foreach (var tag in tagsList)
+            foreach (var tag in tags)
             {
                 res.Entity.Tags.Add(tag);
             }
             // Add new userTagged to post
             foreach (var userTagged in userTaggedList)
             {
-                res.Entity.UserTaggedPost.Add(userTagged);
+                int id = _userRepository.GetByUserName(userTagged.User.UserName).Id;
+                res.Entity.UserTaggedPost.Add(new UserTaggedPost { UserId = id, PostId = item.Id });
+                //res.Entity.UserTaggedPost.Add(userTagged);
             }
             await _context.SaveChangesAsync();
             return res.Entity;
@@ -131,29 +136,6 @@ namespace fakeLook_starter.Repositories
         // Add Like to post if not exist or change IsActive if exists
         public async Task<Post> LikeUnlike(int postId, int userId)
         {
-            //Post post = GetById(postId);
-            ////_context.Posts.SingleOrDefault(p => p.id == postId);
-            //Like like = post.Likes
-            //    .Where(l => l.PostId == postId && l.UserId == userId)
-            //    .SingleOrDefault();
-
-            //if(like == null)
-            //{
-            //    // Like doesn't exists - add a new one
-            //   _context.Posts.Where(p => p.Id == postId).SingleOrDefault().Likes
-            //        .Append(new Like { IsActive = true ,UserId = userId, PostId = postId});
-            //}
-            //else
-            //{
-            //    // boolean XOR on IsActive
-            //    bool l = like.IsActive^true;
-            //    // Like exists - change IsActive of the like
-            //   _context.Posts.Where(p => p.Id == postId).SingleOrDefault()
-            //            .Likes.Where(l => l.UserId == userId).SingleOrDefault().IsActive = l;
-            //}
-
-            //post = GetById(postId);
-            //var res;
             var like = _context.Likes.Where(l => l.PostId == postId && l.UserId == userId).SingleOrDefault();
             if (like == null)
             {
@@ -181,7 +163,7 @@ namespace fakeLook_starter.Repositories
             // Validation on postId
 
             // Add Comment through the CommentRepository
-            var comment = _commentRepository.AddComment(item);
+            var comment = await _commentRepository.AddComment(item);
             // Add Comment to post
             Post post = GetById(item.PostId);
             //await _context.SaveChangesAsync();
@@ -193,14 +175,10 @@ namespace fakeLook_starter.Repositories
             return _context.Posts
                 .Include(p => p.Tags)
                 .Include(p => p.UserTaggedPost)
+                .ThenInclude(p => p.User)
+                .Select(DtoLogicReduced)
                 .Where(predicate).ToList();
             
-        }
-
-        private async Task<List<Tag>> AddTagsOnPost(List<Tag> tags)
-        {
-            // Add Tags to context
-            return await _tagRepository.AddTags(tags);
         }
 
         public string ConvertUserIdToUserName(int userId)
@@ -210,27 +188,12 @@ namespace fakeLook_starter.Repositories
                 .SingleOrDefault().UserName;
             return userName;
         }
+        private async Task<List<Tag>> AddTagsOnPost(List<Tag> tags)
+        {
+            // Add Tags to context
+            return await _tagRepository.AddTags(tags);
+        }
 
-        //private void AddTaggedUsersOnPost(ICollection<UserTaggedPost> userTaggedPost, Post post )
-        //{
-        //    post.UserTaggedPost.Union(userTaggedPost);
-        //}
-
-        //public Post FindItem(Post item)
-        //{
-        //    throw new NotImplementedException();
-        //}
-
-        //public ICollection<Post> GetAll()
-        //{
-        //    return _context.Posts.ToList();
-        //}
-
-
-        //public ICollection<Post> GetByPredicate(Func<Post,bool> predicate)
-        //{
-        //    return _context.Posts.Where(predicate).ToList();
-        //}
 
         private Post DtoLogic(Post post)
         {
@@ -287,6 +250,28 @@ namespace fakeLook_starter.Repositories
             dtoPost.UserTaggedPost = post.UserTaggedPost?.Select(u =>
             {
                 var dtoTaggedPost = _dtoConverter.DtoUserTaggedPost(u);
+                return dtoTaggedPost;
+            }).ToArray();
+
+            return dtoPost;
+        }
+
+        private Post DtoLogicReduced(Post post)
+        {
+            var dtoPost = _dtoConverter.DtoPost(post);
+            // User ID
+            dtoPost.UserId = post.UserId;
+            // Tags
+            dtoPost.Tags = post.Tags?.Select(c =>
+            {
+                var dtoTag = _dtoConverter.DtoTag(c);
+                return dtoTag;
+            }).ToArray();
+            // UserTaggedPost
+            dtoPost.UserTaggedPost = post.UserTaggedPost?.Select(u =>
+            {
+                var dtoTaggedPost = _dtoConverter.DtoUserTaggedPost(u);
+                dtoTaggedPost.User = _dtoConverter.DtoUser(u.User);
                 return dtoTaggedPost;
             }).ToArray();
 
