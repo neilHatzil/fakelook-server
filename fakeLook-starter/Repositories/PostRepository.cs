@@ -16,23 +16,27 @@ namespace fakeLook_starter.Repositories
         private readonly IDtoConverter _dtoConverter;
         readonly private ITagRepository _tagRepository;
         readonly private ICommentRepository _commentRepository;
+        readonly private IUserRepository _userRepository;
 
-        public PostRepository(DataContext context, IDtoConverter dtoConverter, ITagRepository tagRepository, ICommentRepository commentRepository)
+        public PostRepository(DataContext context, IDtoConverter dtoConverter, ITagRepository tagRepository, ICommentRepository commentRepository, IUserRepository userRepository)
         {
             _context = context;
             _dtoConverter = dtoConverter;
             _tagRepository = tagRepository;
             _commentRepository = commentRepository;
+            _userRepository = userRepository;
         }
 
-        public async Task<Post> AddPost(Post item)
+        public async Task<Post> AddPost(Post item)//,ICollection<string> taggedUsers)
         {
             List<Tag> tags = new List<Tag>();
             List<Tag> tagsList = new List<Tag>();
+            List<UserTaggedPost> taggedUserList = new List<UserTaggedPost>();
             tagsList = item.Tags.ToList();
+            taggedUserList = item.UserTaggedPost.ToList();
             // Clear the Taggs of the post
             item.Tags.Clear();
-            var r = item.Tags.ToList();
+            item.UserTaggedPost.Clear();
             // Add tags to post - tag table
             tags = await AddTagsOnPost(tagsList);
             // Add tag to context
@@ -43,7 +47,12 @@ namespace fakeLook_starter.Repositories
                 res.Entity.Tags.Add(tag);
             }
             // Add userTagged to post to post
-            res.Entity.UserTaggedPost.Union(item.UserTaggedPost);
+            foreach (var userTagged in taggedUserList)
+            {
+                int id = _userRepository.GetByUserName(userTagged.User.UserName).Id;
+                res.Entity.UserTaggedPost.Add(new UserTaggedPost { UserId = id , PostId  = item.Id});
+            }
+            //res.Entity.UserTaggedPost.Union(item.UserTaggedPost);
             await _context.SaveChangesAsync();
             return res.Entity;
         }
@@ -179,10 +188,27 @@ namespace fakeLook_starter.Repositories
             return post;
         }
 
+        public ICollection<Post> GetByPredicate(Func<Post, bool> predicate)
+        {
+            return _context.Posts
+                .Include(p => p.Tags)
+                .Include(p => p.UserTaggedPost)
+                .Where(predicate).ToList();
+            
+        }
+
         private async Task<List<Tag>> AddTagsOnPost(List<Tag> tags)
         {
             // Add Tags to context
             return await _tagRepository.AddTags(tags);
+        }
+
+        public string ConvertUserIdToUserName(int userId)
+        {
+            string userName = string.Empty;
+            userName = _context.Users.Where(u => u.Id == userId)
+                .SingleOrDefault().UserName;
+            return userName;
         }
 
         //private void AddTaggedUsersOnPost(ICollection<UserTaggedPost> userTaggedPost, Post post )
@@ -266,5 +292,7 @@ namespace fakeLook_starter.Repositories
 
             return dtoPost;
         }
+
+
     }
 }

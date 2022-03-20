@@ -38,11 +38,7 @@ namespace fakeLook_starter.Repositories
             return res;
         }
 
-        public User GetByUserName(string userName)
-        {
-            return _context.Users.SingleOrDefault(p => p.UserName == userName);
 
-        }
 
         // Get All Users
         public ICollection<User> GetAll()
@@ -87,6 +83,11 @@ namespace fakeLook_starter.Repositories
         public User GetById(int id)
         {
             throw new NotImplementedException();
+        }
+
+        public User GetByUserName(string userName)
+        {
+            return _context.Users.SingleOrDefault(p => p.UserName == userName);
         }
     }
 }

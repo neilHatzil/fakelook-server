@@ -21,13 +21,14 @@ namespace fakeLook_starter.Controllers
             _postRepository = postRepository;
         }
 
+
         // POST api/<PostController>/AddPost
         [HttpPost("AddPost")]
         //[Route("Authenticated")]
         //[TypeFilter(typeof(GetUserActionFilter))]
-        public async Task<Post> AddPost([FromBody] Post item)
+        public async Task<Post> AddPost([FromBody] Post item)//, ICollection<string> taggedUsers)
         {
-           return await _postRepository.AddPost(item);
+           return await _postRepository.AddPost(item);//, taggedUsers);
         }
 
 
@@ -86,6 +87,21 @@ namespace fakeLook_starter.Controllers
         public async Task<Post> AddComment([FromBody] Comment item)
         {
             return await _postRepository.AddComment(item);
+        }
+
+        [HttpPost]
+        [Route("/Filter")]
+        public ICollection<Post> Filter([FromBody]PostFilter filter)
+        {
+            var res = _postRepository.GetByPredicate(post =>
+            {
+                bool date = filter.checkDate(post.Date);//, filter.StartingDate, filter.EndingDate);
+                bool publishers = filter.checkPublishers(_postRepository.ConvertUserIdToUserName(post.UserId));//, filter.Publishers);
+                bool taggs = filter.checkTaggs(post.Tags);//, filter.Tags);
+                bool taggedUsers = filter.checkTaggedUsers(post.UserTaggedPost);//, filter.TaggedUsers);
+                return date && publishers && taggs && taggedUsers;
+            });
+            return res;
         }
     }
 }

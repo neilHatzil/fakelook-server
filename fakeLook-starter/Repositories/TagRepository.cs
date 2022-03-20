@@ -32,9 +32,10 @@ namespace fakeLook_starter.Repositories
                 {
                     // Add Tag to Db
                     var res = _context.Tags.Add(item);
-                    tagsList.Add(tag);
+                    tagsList.Add(res.Entity);
                 }
             }
+
             await _context.SaveChangesAsync();
             return tagsList;
         }

@@ -20,5 +20,6 @@ namespace fakeLook_starter.Interfaces
         public Task<User> Update(User item);
         public Task Delete(int id);
 
+
     }
 }
