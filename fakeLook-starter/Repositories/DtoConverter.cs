@@ -31,7 +31,7 @@ namespace fakeLook_starter.Services
 
         public User DtoUser(User user)
         {
-            return new User() { Id = user.Id, Name = user.Name };
+            return new User() { Id = user.Id, UserName = user.UserName };
         }
 
         public UserTaggedComment DtoUserTaggedComment(UserTaggedComment userTaggedComment)

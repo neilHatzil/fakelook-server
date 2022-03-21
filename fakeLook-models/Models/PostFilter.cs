@@ -64,9 +64,9 @@ namespace fakeLook_models.Models
             // Both aren't empty
             foreach (var taggedUser in TaggedUsers)
             {
-                foreach (var postTaggeuser in postTaggedUsers)
+                foreach (var postTaggedUser in postTaggedUsers)
                 {
-                    if (taggedUser.Equals(postTaggeuser.User.UserName))
+                    if (taggedUser.Equals(postTaggedUser.User.UserName))
                     {
                         return true;
                     }
