@@ -37,6 +37,9 @@ namespace fakeLook_starter.Repositories
             item.UserTaggedComment.Clear();
             // Add tags to comment -tag table
             tags = await AddTagsOnComment(tagsList);
+            // Get userId who posted the comment and insert to item
+            int idUser = _userRepository.GetByUserName(userName).Id;
+            item.UserId = idUser;
             // Add Comment to context
             var res = _context.Comments.Add(item);
             foreach (var tag in tags)
@@ -47,7 +50,7 @@ namespace fakeLook_starter.Repositories
             foreach (var userTagged in userTaggedList)
             {
                 int id = _userRepository.GetByUserName(userTagged.User.UserName).Id;
-                res.Entity.UserTaggedComment.Add(new UserTaggedComment { UserId = id });
+                res.Entity.UserTaggedComment.Add(new UserTaggedComment { UserId = id, CommentId = res.Entity.Id });
             }
             //res.Entity.User.UserName = userName;
             await _context.SaveChangesAsync();

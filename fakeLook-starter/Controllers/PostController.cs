@@ -3,6 +3,7 @@ using fakeLook_models.Models;
 using fakeLook_starter.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -26,9 +27,17 @@ namespace fakeLook_starter.Controllers
         [HttpPost("AddPost")]
         //[Route("Authenticated")]
         //[TypeFilter(typeof(GetUserActionFilter))]
-        public async Task<Post> AddPost([FromBody] Post item)//, ICollection<string> taggedUsers)
+        public async Task<ActionResult<Post>> AddPost([FromBody] Post item)//, ICollection<string> taggedUsers)
         {
-           return await _postRepository.AddPost(item);//, taggedUsers);
+            try
+            {
+                return await _postRepository.AddPost(item);
+            }
+            catch (Exception)
+            {
+                return Problem("Add post failed");
+            }
+            
         }
 
 
@@ -38,27 +47,27 @@ namespace fakeLook_starter.Controllers
         //[TypeFilter(typeof(GetUserActionFilter))]
         public Post GetById(int id)
         {
-       
             return _postRepository.GetById(id);
         }
 
-        // EDIT api/<PostController>/5
-        [HttpPut("{id}")]
-        //[Route("Authenticated")]
-        //[TypeFilter(typeof(GetUserActionFilter))]
-        public async Task<Post> EditPost(Post item)
-        {
-            return await _postRepository.EditPost(item);
-        }
-
-        // EDIT api/<PostController>/EditPostTags
+        // EDIT api/<PostController>/EditPost
         [HttpPut("EditPost")]
         //[Route("Authenticated")]
         //[TypeFilter(typeof(GetUserActionFilter))]
-        public async Task EditPostTags(Post item)
+        public async Task<ActionResult<Post>> EditPost([FromBody]Post item)
         {
-            await _postRepository.EditPost(item);
+            return await _postRepository.EditPost(item);
+            //try
+            //{
+            //    return await _postRepository.EditPost(item);
+            //}
+            //catch (Exception)
+            //{
+
+            //    return Problem("Edit post failed");
+            //}
         }
+
 
         // DELETE api/<PostController>/5
         [HttpDelete("{id}")]
@@ -70,23 +79,39 @@ namespace fakeLook_starter.Controllers
         }
 
         [HttpGet("GetAllPosts")]
-        public IEnumerable<Post> GetAllPosts()
+        public async Task<IEnumerable<Post>> GetAllPosts()
         {
-            return _postRepository.GetAllPosts();
+            return await _postRepository.GetAllPosts();
         }
 
         // POST api/<PostController>/LikeUnlike/{postId}/{userId}
         [HttpPost("LikeUnlike/{postId}/{userId}")]
-        public async Task<Post> LikeUnlike(int postId, int userId)
+        public async Task<ActionResult<Post>> LikeUnlike(int postId, int userId)
         {
-            return await _postRepository.LikeUnlike(postId,userId);
+            try
+            {
+                return await _postRepository.LikeUnlike(postId, userId);
+            }
+            catch (Exception)
+            {
+
+                return Problem("LikeUnlike post failed");
+            }
+            
         }
 
         // POST api/<PostController>/AddComment
         [HttpPost("AddComment")]
-        public async Task<Post> AddComment([FromBody] Comment item)
+        public async Task<ActionResult<Post>> AddComment([FromBody] Comment item)
         {
-            return await _postRepository.AddComment(item);
+            try
+            {
+                return await _postRepository.AddComment(item);
+            }
+            catch (Exception)
+            {
+                return Problem("Add comment post failed");
+            } 
         }
 
         [HttpPost]

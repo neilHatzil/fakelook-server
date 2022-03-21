@@ -29,23 +29,20 @@ namespace fakeLook_starter.Repositories
 
         public async Task<Post> AddPost(Post item)//,ICollection<string> taggedUsers)
         {
-            List<Tag> tags = new List<Tag>();
-            List<Tag> tagsList = new List<Tag>();
-            List<UserTaggedPost> taggedUserList = new List<UserTaggedPost>();
-            tagsList = item.Tags.ToList();
-            taggedUserList = item.UserTaggedPost.ToList();
+            //List<Tag> tagsList = item.Tags.ToList();
+            List<UserTaggedPost> taggedUserList = item.UserTaggedPost.ToList();
             // Clear the Taggs of the post
-            item.Tags.Clear();
+            //item.Tags.Clear();
             item.UserTaggedPost.Clear();
             // Add tags to post - tag table
-            tags = await AddTagsOnPost(tagsList);
+            item.Tags = await AddTagsOnPost(item.Tags.ToList());
             // Add tag to context
             var res = _context.Posts.Add(item);
             // Add Taggs to post
-            foreach (var tag in tags)
-            {
-                res.Entity.Tags.Add(tag);
-            }
+            //foreach (var tag in tags)
+            //{
+            //    res.Entity.Tags.Add(tag);
+            //}
             // Add userTagged to post to post
             foreach (var userTagged in taggedUserList)
             {
@@ -74,11 +71,8 @@ namespace fakeLook_starter.Repositories
 
         public async Task<Post> EditPost(Post item)
         {
-            List<Tag> tags = new List<Tag>();
-            List<Tag> tagsList = new List<Tag>();
-            List<UserTaggedPost> userTaggedList = new List<UserTaggedPost>();
-            tagsList = item.Tags.ToList();
-            userTaggedList = item.UserTaggedPost.ToList();
+            List<Tag> tagsList = item.Tags.ToList();
+            List<UserTaggedPost> userTaggedList = item.UserTaggedPost.ToList();
             // Clear the post's tags and userTagged
             item.Tags.Clear();
             item.UserTaggedPost.Clear();
@@ -90,7 +84,7 @@ namespace fakeLook_starter.Repositories
             tagsC.Tags.Clear();
             tagsC.UserTaggedPost.Clear();
             // Add tags to post - tag table
-            tags = await AddTagsOnPost(tagsList);
+            List<Tag> tags = await AddTagsOnPost(tagsList);
             // Update the post without the tags 
             var res = _context.Posts.Update(tagsC);
             // Add new Taggs to post
@@ -118,9 +112,9 @@ namespace fakeLook_starter.Repositories
             return res.Entity;
         }
 
-        public IEnumerable<Post> GetAllPosts()
+        public async Task<IEnumerable<Post>> GetAllPosts()
         {
-            var posts = _context.Posts
+            var posts = await _context.Posts
                 .OrderByDescending(d => d.Date)
                 .Include(p => p.Likes)
                 .Include(p => p.Tags)
@@ -129,8 +123,11 @@ namespace fakeLook_starter.Repositories
                 .ThenInclude(c => c.Tags)
                 .Include(p => p.Comments)
                 .ThenInclude(c => c.UserTaggedComment)
-                .Select(DtoLogic).ToList();
-            return posts;
+                //.AsSplitQuery()
+                .ToListAsync();
+
+
+            return posts.Select(DtoLogic);
         }
 
         // Add Like to post if not exist or change IsActive if exists
