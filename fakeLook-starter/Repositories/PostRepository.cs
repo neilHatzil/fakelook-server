@@ -38,18 +38,27 @@ namespace fakeLook_starter.Repositories
             item.Tags = await AddTagsOnPost(item.Tags.ToList());
             // Add tag to context
             var res = _context.Posts.Add(item);
+
+            User u = _userRepository.GetById(item.UserId);
+            item.User.UserName = u.UserName;
             // Add Taggs to post
             //foreach (var tag in tags)
             //{
             //    res.Entity.Tags.Add(tag);
             //}
+            // Save locally the user id
+            //int userId = _userRepository.GetByUserName(item.User.UserName).Id;
             // Add userTagged to post to post
             foreach (var userTagged in taggedUserList)
             {
+
                 int id = _userRepository.GetByUserName(userTagged.User.UserName).Id;
-                res.Entity.UserTaggedPost.Add(new UserTaggedPost { UserId = id , PostId  = item.Id});
+                //User user = new User { Id = id, UserName = _userRepository.GetById(id).UserName };
+                User user = _userRepository.GetById(id);
+                res.Entity.UserTaggedPost.Add(new UserTaggedPost { UserId = id, PostId = item.Id, User = user});
             }
-            //res.Entity.UserTaggedPost.Union(item.UserTaggedPost);
+            // Add User object to Post
+            //res.Entity.User.UserName = _userRepository.GetById(item.UserId).UserName;//new User { Id = item.UserId, UserName = _userRepository.GetById(item.UserId).UserName };
             await _context.SaveChangesAsync();
             return res.Entity;
         }
@@ -60,10 +69,12 @@ namespace fakeLook_starter.Repositories
                 .Include(p => p.Likes)
                 .Include(p => p.Tags)
                 .Include(p => p.UserTaggedPost)
+                .ThenInclude(u => u.User)
                 .Include(p => p.Comments)
                 .ThenInclude(c => c.Tags)
                 .Include(p => p.Comments)
                 .ThenInclude(c => c.UserTaggedComment)
+                .ThenInclude(u => u.User)
                 .Select(DtoLogic)
                 .SingleOrDefault(p => p.Id == id);
             return posts; 
@@ -196,7 +207,7 @@ namespace fakeLook_starter.Repositories
         {
             var dtoPost = _dtoConverter.DtoPost(post);
             // User
-            //dtoPost.User = _dtoConverter.DtoUser(post.User);
+            dtoPost.User = _dtoConverter.DtoUser(post.User);
             // User ID
             dtoPost.UserId = post.UserId;
             // Comments
@@ -204,7 +215,7 @@ namespace fakeLook_starter.Repositories
             {
                 var dtoComment = _dtoConverter.DtoComment(c);
                 // User of the comment
-                //dtoComment.User = _dtoConverter.DtoUser(c.User);
+                dtoComment.User = _dtoConverter.DtoUser(c.User);
                 // User ID of the comment
                 dtoComment.UserId = c.UserId;
                 // Tags of the comment

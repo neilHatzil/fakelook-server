@@ -82,7 +82,7 @@ namespace fakeLook_starter.Repositories
 
         public User GetById(int id)
         {
-            throw new NotImplementedException();
+            return _context.Users.SingleOrDefault(p => p.Id == id);
         }
 
         public User GetByUserName(string userName)
