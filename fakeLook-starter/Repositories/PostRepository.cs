@@ -52,10 +52,11 @@ namespace fakeLook_starter.Repositories
             foreach (var userTagged in taggedUserList)
             {
 
-                int id = _userRepository.GetByUserName(userTagged.User.UserName).Id;
+                User tempU = _userRepository.GetByUserName(userTagged.User.UserName);
+                if (tempU == null) { continue; }
                 //User user = new User { Id = id, UserName = _userRepository.GetById(id).UserName };
-                User user = _userRepository.GetById(id);
-                res.Entity.UserTaggedPost.Add(new UserTaggedPost { UserId = id, PostId = item.Id, User = user});
+                User user = _userRepository.GetById(tempU.Id);
+                res.Entity.UserTaggedPost.Add(new UserTaggedPost { UserId = tempU.Id, PostId = item.Id, User = user});
             }
             // Add User object to Post
             //res.Entity.User.UserName = _userRepository.GetById(item.UserId).UserName;//new User { Id = item.UserId, UserName = _userRepository.GetById(item.UserId).UserName };
@@ -68,6 +69,7 @@ namespace fakeLook_starter.Repositories
             var posts = _context.Posts
                 .Include(p => p.Likes)
                 .Include(p => p.Tags)
+                .Include(u => u.User)
                 .Include(p => p.UserTaggedPost)
                 .ThenInclude(u => u.User)
                 .Include(p => p.Comments)
@@ -106,8 +108,10 @@ namespace fakeLook_starter.Repositories
             // Add new userTagged to post
             foreach (var userTagged in userTaggedList)
             {
-                int id = _userRepository.GetByUserName(userTagged.User.UserName).Id;
-                res.Entity.UserTaggedPost.Add(new UserTaggedPost { UserId = id, PostId = item.Id });
+                //int id = _userRepository.GetByUserName(userTagged.User.UserName).Id;
+                User tempU = _userRepository.GetByUserName(userTagged.User.UserName);
+                if (tempU == null) { continue; }
+                res.Entity.UserTaggedPost.Add(new UserTaggedPost { UserId = tempU.Id, PostId = item.Id });
                 //res.Entity.UserTaggedPost.Add(userTagged);
             }
             await _context.SaveChangesAsync();
@@ -130,10 +134,14 @@ namespace fakeLook_starter.Repositories
                 .Include(p => p.Likes)
                 .Include(p => p.Tags)
                 .Include(p => p.UserTaggedPost)
+                .ThenInclude(u => u.User)
                 .Include(p => p.Comments)
                 .ThenInclude(c => c.Tags)
                 .Include(p => p.Comments)
                 .ThenInclude(c => c.UserTaggedComment)
+                .ThenInclude(c => c.User)
+                .Include(p => p.Comments)
+                .ThenInclude(u => u.User)
                 //.AsSplitQuery()
                 .ToListAsync();
 
@@ -228,6 +236,7 @@ namespace fakeLook_starter.Repositories
                 dtoComment.UserTaggedComment = c.UserTaggedComment?.Select(t =>
                 {
                     var dtoUserTaggedComment = _dtoConverter.DtoUserTaggedComment(t);
+                    dtoUserTaggedComment.User = _dtoConverter.DtoUser(t.User);
                     return dtoUserTaggedComment;
                 }).ToArray();
                 return dtoComment;
@@ -258,6 +267,7 @@ namespace fakeLook_starter.Repositories
             dtoPost.UserTaggedPost = post.UserTaggedPost?.Select(u =>
             {
                 var dtoTaggedPost = _dtoConverter.DtoUserTaggedPost(u);
+                dtoTaggedPost.User = _dtoConverter.DtoUser(u.User);
                 return dtoTaggedPost;
             }).ToArray();
 

@@ -64,7 +64,7 @@ namespace fakeLook_dal.Data
                 var users = new User[amount];
                 for (int i = 0; i < amount; i++)
                 {
-                    users[i] = new User() { Id = i + 1, Address = address, Name = name + (i + 1).ToString(), Password = password };
+                    users[i] = new User() { Id = i + 1, UserName = name + (i + 1).ToString(), Address = address, Name = name + (i + 1).ToString(), Password = password };
                 }
                 SeedDb(users);
             }
