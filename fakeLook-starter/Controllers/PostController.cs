@@ -114,8 +114,8 @@ namespace fakeLook_starter.Controllers
             } 
         }
 
-        [HttpPost]
-        [Route("/Filter")]
+        // POST api/<PostController>/Filter
+        [HttpPost("Filter")]
         public ICollection<Post> Filter([FromBody]PostFilter filter)
         {
             var res = _postRepository.GetByPredicate(post =>
