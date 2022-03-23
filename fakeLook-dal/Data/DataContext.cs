@@ -46,7 +46,7 @@ namespace fakeLook_dal.Data
         }
         private void SeedDb(ModelBuilder modelBuilder)
         {
-            const int amount = 5;
+            const int amount = 10;
             AddUsers();
             AddPosts();
             AddComment();
@@ -58,7 +58,7 @@ namespace fakeLook_dal.Data
 
             void AddUsers()
             {
-                var name = "user ";
+                var name = "user";
                 var address = "some adress";
                 var password = "12345".GetHashCode().ToString();
                 var users = new User[amount];
@@ -72,7 +72,7 @@ namespace fakeLook_dal.Data
             {
                 var random = new Random();
                 var src = "https://s.yimg.com/ny/api/res/1.2/PPu_U6UY8JjEGaR3t4T3wQ--/YXBwaWQ9aGlnaGxhbmRlcjt3PTk2MDtoPTcyMDtjZj13ZWJw/https://s.yimg.com/uu/api/res/1.2/Rffcviow.eCHjmEu2msLJg--~B/aD0xNzU3O3c9MjM0MzthcHBpZD15dGFjaHlvbg--/https://media.zenfs.com/en/insider_articles_922/c6ce8d0b9a7b28f9c2dee8171da98b8f";
-                var description = "post ";
+                var description = "Description for the post number ";
                 var posts = new Post[amount];
                 for (int i = 0; i < amount; i++)
                 {
@@ -92,7 +92,8 @@ namespace fakeLook_dal.Data
             }
             void AddComment()
             {
-                var content = "comment ";
+                var content = "comment for postId ";
+                var content2 = " from userId ";
                 var comments = new Comment[amount * amount];
                 for (int i = 0; i < amount; i++)
                 {
@@ -101,7 +102,7 @@ namespace fakeLook_dal.Data
                         comments[i * amount + j] = new Comment()
                         {
                             Id = i * amount + j + 1,
-                            Content = content + (j + 1).ToString(),
+                            Content = content + (i + 1) + content2 + (j + 1).ToString(),
                             UserId = j + 1,
                             PostId = i + 1,
                         };
@@ -132,7 +133,7 @@ namespace fakeLook_dal.Data
             void AddTags()
             {
                 // didnt seeded the relationships only the data
-                var content = "tag ";
+                var content = "tag";
                 var tags = new Tag[amount];
                 for (int i = 0; i < amount; i++)
                 {
@@ -153,6 +154,7 @@ namespace fakeLook_dal.Data
                 }
                 SeedDb(userTagged);
             }
+
             void AddUserTaggedComments()
             {
                 var userTagged = new UserTaggedComment[amount * 2];
