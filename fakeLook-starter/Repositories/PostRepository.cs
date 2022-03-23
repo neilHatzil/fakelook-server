@@ -69,6 +69,7 @@ namespace fakeLook_starter.Repositories
             var posts = _context.Posts
                 .Include(p => p.Likes)
                 .Include(p => p.Tags)
+                .Include(p => p.User)
                 .Include(p => p.UserTaggedPost)
                 .ThenInclude(u => u.User)
                 .Include(p => p.Comments)
@@ -134,6 +135,7 @@ namespace fakeLook_starter.Repositories
                 .OrderByDescending(d => d.Date)
                 .Include(p => p.Likes)
                 .Include(p => p.Tags)
+                .Include(p => p.User)
                 .Include(p => p.UserTaggedPost)
                 .ThenInclude(u => u.User)
                 .Include(p => p.Comments)
@@ -190,6 +192,7 @@ namespace fakeLook_starter.Repositories
         public ICollection<Post> GetByPredicate(Func<Post, bool> predicate)
         {
             return _context.Posts
+                .OrderByDescending(p=>p.Date)
                 .Include(p => p.Tags)
                 .Include(p => p.UserTaggedPost)
                 .ThenInclude(p => p.User)
